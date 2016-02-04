@@ -1,0 +1,21 @@
+
+/target
+/out
+=======
+# Eclipse project files
+.classpath
+.project
+.settings/
+
+
+# Intellij project files
+*.iml
+*.patch
+.idea/
+#src/test/
+
+# Others
+META-INF/
+target/
+logs/
+
