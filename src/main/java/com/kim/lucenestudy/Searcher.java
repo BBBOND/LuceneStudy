@@ -38,8 +38,8 @@ public class Searcher {
     }
 
     public static void main(String[] args) {
-        String indexDir = "C:\\Users\\伟阳\\Desktop\\Lucene";
-        String q = "UNESCO";
+        String indexDir = "F:\\Lucene\\Lucene";
+        String q = "unesco";
         try {
             search(indexDir,q);
         } catch (Exception e) {

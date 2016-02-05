@@ -31,7 +31,7 @@ public class IndexingTest {
 
     @Before
     public void setUp() throws Exception {
-        directory = FSDirectory.open(Paths.get("C:\\Users\\伟阳\\Desktop\\Lucene"));
+        directory = FSDirectory.open(Paths.get("F:\\Lucene\\Lucene"));
         IndexWriter writer = getWriter();
         for (int i = 0; i < ids.length; i++) {
             Document document = new Document();
