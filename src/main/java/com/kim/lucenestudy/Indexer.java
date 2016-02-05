@@ -87,7 +87,7 @@ public class Indexer {
         long start = System.currentTimeMillis();
         try {
             indexer = new Indexer("F:\\Lucene\\Lucene");
-            numIndexed = indexer.index("F:\\Lucene\\Lucene\\data");
+            numIndexed = indexer.index("F:\\Lucene\\data");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
