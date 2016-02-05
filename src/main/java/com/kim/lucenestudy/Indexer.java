@@ -22,6 +22,7 @@ public class Indexer {
 
     /**
      * 实例化indexWriter
+     *
      * @param indexDir
      * @throws Exception
      */
@@ -29,26 +30,28 @@ public class Indexer {
         Directory dir = FSDirectory.open(Paths.get(indexDir));
         Analyzer analyzer = new StandardAnalyzer(); //标准分词器
         IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
-        writer = new IndexWriter(dir,indexWriterConfig);
+        writer = new IndexWriter(dir, indexWriterConfig);
 
     }
 
     /**
      * 关闭indexWriter
+     *
      * @throws Exception
      */
-    public void close() throws Exception{
+    public void close() throws Exception {
         writer.close();
     }
 
     /**
      * 索引指定目录的所有文件
+     *
      * @param dataDir
      * @throws Exception
      */
-    public int index(String dataDir) throws Exception{
+    public int index(String dataDir) throws Exception {
         File[] files = new File(dataDir).listFiles();
-        for (File file : files){
+        for (File file : files) {
             indexFile(file);
         }
         return writer.numDocs();
@@ -56,23 +59,47 @@ public class Indexer {
 
     /**
      * 索引指定文件
+     *
      * @param file
      */
     private void indexFile(File file) throws Exception {
-        System.out.println("索引文件:"+file.getCanonicalPath());
+        System.out.println("索引文件:" + file.getCanonicalPath());
         Document document = getDocument(file);
         writer.addDocument(document);
     }
 
     /**
      * 获取文档，文档里再设置每个字段
+     *
      * @param file
      */
     private Document getDocument(File file) throws Exception {
         Document document = new Document();
-        document.add(new TextField("contents",new FileReader(file)));
-        document.add(new TextField("fileName",file.getName(), Field.Store.YES));
-        document.add(new TextField("fullPath",file.getCanonicalPath(), Field.Store.YES));
+        document.add(new TextField("contents", new FileReader(file)));
+        document.add(new TextField("fileName", file.getName(), Field.Store.YES));
+        document.add(new TextField("fullPath", file.getCanonicalPath(), Field.Store.YES));
         return document;
+    }
+
+    public static void main(String[] args) {
+        Indexer indexer = null;
+        int numIndexed = 0;
+        long start = System.currentTimeMillis();
+        try {
+            indexer = new Indexer("C:\\Users\\伟阳\\Desktop\\Lucene");
+            numIndexed = indexer.index("C:\\Users\\伟阳\\Desktop\\Lucene\\data");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (indexer != null) {
+                try {
+                    indexer.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("索引：" + numIndexed + " 个文件 花费了" + (end - start) + " 毫秒");
     }
 }
