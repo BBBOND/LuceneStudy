@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 /**
  * Created by 伟阳 on 2016/2/5.
  */
-public class IndexingTest {
+public class Indexer2 {
 
     private String[] ids = {"1", "2", "3"};
     private String[] citys = {"changchun", "ningbo", "taizhou"};
@@ -31,7 +31,7 @@ public class IndexingTest {
 
     @Before
     public void setUp() throws Exception {
-        directory = FSDirectory.open(Paths.get("F:\\Lucene\\Lucene"));
+        directory = FSDirectory.open(Paths.get("F:\\Lucene\\Lucene2"));
         IndexWriter writer = getWriter();
         for (int i = 0; i < ids.length; i++) {
             Document document = new Document();

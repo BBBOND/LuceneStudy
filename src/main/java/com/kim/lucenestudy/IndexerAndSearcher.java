@@ -17,14 +17,14 @@ import java.nio.file.Paths;
 /**
  * Created by 伟阳 on 2016/2/5.
  */
-public class IndexingTest2 {
+public class IndexerAndSearcher {
 
 
-    private String[] ids = {"1", "2", "3","4"};
-    private String[] author = {"Jack","Marry","John","Kim"};
-    private String[] positions = {"accounting","technician","salesperson","boss"};
-    private String[] citys = {"changchun", "ningbo", "taizhou","shanghai"};
-    private String[] titles = {"About Changchun","About Ningbo","About Taizhou","About Shanghai"};
+    private String[] ids = {"1", "2", "3", "4"};
+    private String[] author = {"Jack", "Marry", "John", "Kim"};
+    private String[] positions = {"accounting", "technician", "salesperson", "boss"};
+    private String[] citys = {"changchun", "ningbo", "taizhou", "shanghai"};
+    private String[] titles = {"About Changchun", "About Ningbo", "About Taizhou", "About Shanghai"};
     private String[] contents = {
             "Changchun is cold!",
             "Ningbo is cold too!",
@@ -47,12 +47,13 @@ public class IndexingTest2 {
     }
 
     /**
-     * 生成索引
+     * 生成索引(带权值)
+     *
      * @throws Exception
      */
     @Test
-    public void index() throws Exception{
-        directory = FSDirectory.open(Paths.get("F:\\Lucene\\Lucene"));
+    public void index() throws Exception {
+        directory = FSDirectory.open(Paths.get("F:\\Lucene\\Lucene3"));
         IndexWriter writer = getWriter();
         for (int i = 0; i < ids.length; i++) {
             Document document = new Document();
@@ -60,7 +61,7 @@ public class IndexingTest2 {
             document.add(new StringField("author", author[i], Field.Store.YES));
             document.add(new StringField("position", positions[i], Field.Store.YES));
             TextField field = new TextField("title", titles[i], Field.Store.YES);
-            if ("boss".equals(positions[i])){
+            if ("boss".equals(positions[i])) {
                 field.setBoost(1.5f);
             }
             document.add(field);
@@ -72,23 +73,26 @@ public class IndexingTest2 {
     }
 
     /**
-     * 查询
+     * TermQuery查询
+     *
      * @throws Exception
      */
     @Test
-    public void search() throws Exception{
-        directory = FSDirectory.open(Paths.get("F:\\Lucene\\Lucene"));
+    public void search() throws Exception {
+        directory = FSDirectory.open(Paths.get("F:\\Lucene\\Lucene3"));
         IndexReader reader = DirectoryReader.open(directory);
         IndexSearcher searcher = new IndexSearcher(reader);
         String searchField = "title";
         String q = "about";
-        Term t = new Term(searchField,q);
+        Term t = new Term(searchField, q);
         Query query = new TermQuery(t);
-        TopDocs hits = searcher.search(query,10);
-        System.out.println("匹配'"+q+"',供查询到 "+hits.totalHits+" 个文档");
-        for (ScoreDoc scoreDoc : hits.scoreDocs){
+        long start = System.currentTimeMillis();
+        TopDocs hits = searcher.search(query, 10);
+        long end = System.currentTimeMillis();
+        System.out.println("匹配'" + q + "'花费" + (end - start) + " 毫秒,供查询到 " + hits.totalHits + " 个文档");
+        for (ScoreDoc scoreDoc : hits.scoreDocs) {
             Document document = searcher.doc(scoreDoc.doc);
-            System.out.println(document.get("author")+" "+document.get("title"));
+            System.out.println(document.get("author") + " " + document.get("title"));
         }
         reader.close();
     }

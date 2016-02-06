@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 /**
  * Created by 伟阳 on 2016/2/5.
  */
-public class SearchTest {
+public class Searcher2 {
 
     private Directory directory;
     private IndexReader reader;
@@ -39,7 +39,7 @@ public class SearchTest {
     }
 
     /**
-     * 对特定项搜索
+     * 对特定项搜索 TermQuery
      *
      * @throws Exception
      */
@@ -49,8 +49,10 @@ public class SearchTest {
         String q = "china";
         Term t = new Term(searchField, q);
         Query query = new TermQuery(t);
+        long start = System.currentTimeMillis();
         TopDocs hits = searcher.search(query, 10);
-        System.out.println("匹配'" + q + "',供查询到 " + hits.totalHits + " 个文档");
+        long end = System.currentTimeMillis();
+        System.out.println("匹配'" + q + "'花费 " + (end - start) + " 毫秒,共查询到 " + hits.totalHits + " 个文档");
         for (ScoreDoc scoreDoc : hits.scoreDocs) {
             Document document = searcher.doc(scoreDoc.doc);
             System.out.println(document.get("fullPath"));
@@ -58,7 +60,7 @@ public class SearchTest {
     }
 
     /**
-     * 解析查询表达式
+     * 解析查询表达式 QueryParser
      *
      * @throws Exception
      */
@@ -80,7 +82,7 @@ public class SearchTest {
     }
 
     /**
-     * 分页查询
+     * 分页查询 TermQuery和QueryParser都可使用
      *
      * @throws Exception
      */
@@ -88,4 +90,6 @@ public class SearchTest {
     public void testPagesQuery() throws Exception {
         // TODO: 2016/2/5 每次获取100，通过判断进行分页
     }
+
+
 }

@@ -19,6 +19,12 @@ import java.nio.file.Paths;
  * Created by 伟阳 on 2016/2/5.
  */
 public class Searcher {
+    /**
+     * 使用QueryParser搜索
+     * @param indexDir
+     * @param q
+     * @throws Exception
+     */
     public static void search(String indexDir, String q) throws Exception {
         Directory directory = FSDirectory.open(Paths.get(indexDir));
         IndexReader reader = DirectoryReader.open(directory);
