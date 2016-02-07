@@ -125,4 +125,29 @@ public class IndexerAndSearcher2 {
             System.out.println(document.get("id") + "-->" + document.get("city"));
         }
     }
+
+    /**
+     * 条件查询 BooleanQuery
+     *
+     * @throws Exception
+     */
+    @Test
+    public void booleanQuery() throws Exception {
+        reader = getReader();
+        searcher = new IndexSearcher(reader);
+        NumericRangeQuery<Integer> query1 = NumericRangeQuery.newIntRange("id", 1, 2, true, true);
+        PrefixQuery query2 = new PrefixQuery(new Term("city", "c"));
+        BooleanQuery.Builder builder = new BooleanQuery.Builder();
+        builder.add(query1, BooleanClause.Occur.MUST); //并且
+        builder.add(query2, BooleanClause.Occur.MUST); //并且
+        BooleanQuery query = builder.build();
+        long start = System.currentTimeMillis();
+        TopDocs hits = searcher.search(query, 10);
+        long end = System.currentTimeMillis();
+        System.out.println("匹配花费" + (end - start) + " 毫秒,供查询到 " + hits.totalHits + " 个文档");
+        for (ScoreDoc scoreDoc : hits.scoreDocs) {
+            Document document = searcher.doc(scoreDoc.doc);
+            System.out.println(document.get("id") + "-->" + document.get("city"));
+        }
+    }
 }
