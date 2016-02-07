@@ -3,10 +3,7 @@ package com.kim.lucenestudy;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -99,6 +96,26 @@ public class IndexerAndSearcher2 {
         reader = getReader();
         searcher = new IndexSearcher(reader);
         NumericRangeQuery<Integer> query = NumericRangeQuery.newIntRange("id", 1, 2, true, true);
+        long start = System.currentTimeMillis();
+        TopDocs hits = searcher.search(query, 10);
+        long end = System.currentTimeMillis();
+        System.out.println("匹配花费" + (end - start) + " 毫秒,供查询到 " + hits.totalHits + " 个文档");
+        for (ScoreDoc scoreDoc : hits.scoreDocs) {
+            Document document = searcher.doc(scoreDoc.doc);
+            System.out.println(document.get("id") + "-->" + document.get("city"));
+        }
+    }
+
+    /**
+     * 特定字符串开头搜索 PrefixQuery
+     *
+     * @throws Exception
+     */
+    @Test
+    public void prefixQuery() throws Exception {
+        reader = getReader();
+        searcher = new IndexSearcher(reader);
+        PrefixQuery query = new PrefixQuery(new Term("city", "c"));
         long start = System.currentTimeMillis();
         TopDocs hits = searcher.search(query, 10);
         long end = System.currentTimeMillis();
