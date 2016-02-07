@@ -7,10 +7,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermRangeQuery;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
@@ -80,8 +77,8 @@ public class IndexerAndSearcher2 {
     @Test
     public void termRangeQuery() throws Exception {
         reader = getReader();
-        TermRangeQuery query = new TermRangeQuery("desc", new BytesRef("b".getBytes()), new BytesRef("d".getBytes()), true, true);
         searcher = new IndexSearcher(reader);
+        TermRangeQuery query = new TermRangeQuery("desc", new BytesRef("b".getBytes()), new BytesRef("d".getBytes()), true, true);
         long start = System.currentTimeMillis();
         TopDocs hits = searcher.search(query, 10);
         long end = System.currentTimeMillis();
@@ -92,4 +89,23 @@ public class IndexerAndSearcher2 {
         }
     }
 
+    /**
+     * 指定数字范围搜索 NumericRangeQuery
+     *
+     * @throws Exception
+     */
+    @Test
+    public void numericRangeQuery() throws Exception {
+        reader = getReader();
+        searcher = new IndexSearcher(reader);
+        NumericRangeQuery<Integer> query = NumericRangeQuery.newIntRange("id", 1, 2, true, true);
+        long start = System.currentTimeMillis();
+        TopDocs hits = searcher.search(query, 10);
+        long end = System.currentTimeMillis();
+        System.out.println("匹配花费" + (end - start) + " 毫秒,供查询到 " + hits.totalHits + " 个文档");
+        for (ScoreDoc scoreDoc : hits.scoreDocs) {
+            Document document = searcher.doc(scoreDoc.doc);
+            System.out.println(document.get("id") + "-->" + document.get("city"));
+        }
+    }
 }
